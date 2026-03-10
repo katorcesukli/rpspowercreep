@@ -1,5 +1,6 @@
 package org.personal.rpspowercreep.model;
 
+import io.netty.handler.codec.socks.SocksAuthRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Player {
 
     @Id
