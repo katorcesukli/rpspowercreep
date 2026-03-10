@@ -18,38 +18,42 @@ public class PlayerService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    public Player register(String username, String password) throws Exception{
+    public Player register(String username) throws Exception{
         if (playerRepository.findByUsername(username).isPresent()) {
             throw new Exception("Username already exists");
         }
 
-        String hashedPassword = passwordEncoder.encode(password);
-
         Player player = Player.builder()
                 .username(username)
-                .password(hashedPassword).build();
+                .build();
 
         return playerRepository.save(player);
     }
 
-    public Player login(String username, String rawPassword) throws Exception {
+    public Player login(String username) throws Exception {
         Player player = playerRepository.findByUsername(username)
                 .orElseThrow(() -> new Exception("Invalid username or password"));
 
-        if (!passwordEncoder.matches(rawPassword, player.getPassword())) {
-            throw new Exception("Invalid username or password");
-        }
 
         return player;
     }
 
     public Player register(RegisterRequest request) throws Exception {
-        return register(request.username(), request.password());
+        return register(request.username());
     }
 
     public Player login(LoginRequest request) throws Exception {
-        return login(request.username(), request.password());
+        return login(request.username());
     }
 
+    public Player loginOrRegister(String username) {
+        return playerRepository.findByUsername(username)
+                .orElseGet(() -> {
+                    Player player = Player.builder()
+                            .username(username)
+                            .build();
+                    return playerRepository.save(player);
+                });
+    }
 
 }

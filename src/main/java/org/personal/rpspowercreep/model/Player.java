@@ -26,8 +26,6 @@ public class Player {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
-    private String password;
 
     private Integer score = 0;
 
