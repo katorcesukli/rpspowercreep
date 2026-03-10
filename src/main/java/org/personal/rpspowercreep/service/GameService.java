@@ -12,6 +12,8 @@ import org.personal.rpspowercreep.repository.PlayerRepository;
 import org.personal.rpspowercreep.repository.RoundRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class GameService {
@@ -28,7 +30,7 @@ public class GameService {
         playerRepository.save(player);
 
         Game game = new Game(player);
-
+        gameRepository.save(game);
         return gameRepository.save(game);
     }
 
@@ -49,6 +51,12 @@ public class GameService {
         return gameRepository.save(game);
     }
 
+    public List<Game> listWaitingGames() {
+        return gameRepository.findAll().stream()
+                .filter(game -> game.getPlayer2() == null)
+                .toList();
+    }
+
     @Transactional
     public Round submitMove(String gameId, String playerId, ChoiceType choice) {
 
@@ -57,6 +65,10 @@ public class GameService {
 
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
+
+        if (player2 == null) {
+            throw new RuntimeException("Waiting for second player to join");
+        }
 
         Round round = getCurrentRound(game);
 
@@ -95,6 +107,9 @@ public class GameService {
 
             game.setCurrentRound(game.getCurrentRound() + 1);
 
+            if (checkGameFinished(player1, player2)) {
+                game.setFinished(true);
+            }
             // Reset submission flags not needed — new round object will be created
             gameRepository.save(game);
 
@@ -106,6 +121,9 @@ public class GameService {
 
     private void updateScore(Player p1, Player p2, RoundResult result) {
 
+        if (p1.getScore() == null) p1.setScore(0);
+        if (p2.getScore() == null) p2.setScore(0);
+
         switch (result) {
             case PLAYER1_WIN -> p1.setScore(p1.getScore() + 1);
             case PLAYER2_WIN -> p2.setScore(p2.getScore() + 1);
@@ -113,6 +131,7 @@ public class GameService {
     }
 
     private Round getCurrentRound(Game game) {
+
         return game.getRounds().stream()
                 .filter(r -> r.getRoundNumber().equals(game.getCurrentRound()))
                 .findFirst()

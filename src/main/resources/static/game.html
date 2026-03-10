@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RPS Powercreep</title>
+</head>
+
+<body>
+
+<h1>RPS Powercreep</h1>
+
+<h2>Join Game</h2>
+
+<form id="joinForm">
+    <input type="text" id="username" placeholder="Enter username" required>
+    <input type="text" id="gameId" placeholder="Enter Game ID" required>
+    <button type="submit">Join</button>
+</form>
+
+<p id="joinResult"></p>
+
+<hr>
+
+<div id="gameSection" style="display:none;">
+
+    <h2>Game</h2>
+
+    <p id="playerName"></p>
+
+    <div id="choices"></div>
+
+    <h3>Scores</h3>
+    <div id="scores"></div>
+
+    <h3>Last Round</h3>
+    <div id="roundInfo"></div>
+
+</div>
+
+<script src="js/game.js"></script>
+
+</body>
+</html>

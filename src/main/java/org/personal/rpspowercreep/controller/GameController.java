@@ -31,6 +31,13 @@ public class GameController {
         return toGameDTO(game);
     }
 
+    @GetMapping("/waiting")
+    public List<GameDTO> listWaitingGames() {
+        return gameService.listWaitingGames().stream()
+                .map(this::toGameDTO)
+                .toList();
+    }
+
     @PostMapping("/move")
     public MoveStatusDTO submitMove(@RequestParam String gameId,
                                     @RequestParam String playerId,
